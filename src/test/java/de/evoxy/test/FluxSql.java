@@ -4,8 +4,6 @@ import de.haizon.flux.Flux;
 import de.haizon.flux.sql.FluxSqlWrapper;
 import de.haizon.flux.stores.DataStore;
 import de.haizon.flux.update.Update;
-import de.haizon.flux.update.UpdateResult;
-import de.haizon.flux.update.UpdateResultType;
 
 public class FluxSql {
 
@@ -22,13 +20,17 @@ public class FluxSql {
 
         dataStore.save(testStore);
 
-        new Update(TestStore.class)
+        new Update<>(TestStore.class)
                 .where("name", "Test")
                 .set("money", 2000)
                 .execute(updateResult -> {
-                    if(updateResult.)
-                });
-
+                    if (updateResult.isSuccess()) {
+                        System.out.println("✓ Update successful!");
+                        System.out.println("  Rows affected: " + updateResult.getRowsAffected());
+                        System.out.println("  Query: " + updateResult.getQuery());
+                    }
+                },
+                error -> System.out.println("✗ Update failed: " + error.getMessage()));
     }
 
 }
