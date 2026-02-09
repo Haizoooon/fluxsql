@@ -3,6 +3,7 @@ package de.haizon.flux.update;
 import de.haizon.flux.Flux;
 import de.haizon.flux.annotations.Entity;
 import de.haizon.flux.result.UpdateResult;
+import de.haizon.flux.result.UpdateResultType;
 
 import java.util.function.Consumer;
 
@@ -73,6 +74,7 @@ public class Update<T> {
         return this;
     }
 
+    // Single execute() method - returns UpdateResult without callbacks
     public UpdateResult execute() {
         String query = buildQuery();
         try {
@@ -83,20 +85,45 @@ public class Update<T> {
         }
     }
 
-    public void execute(Consumer<UpdateResult> onSuccess) {
-        UpdateResult result = execute();
-        if (result.isSuccess()) {
-            onSuccess.accept(result);
-        }
+    // execute() with onSuccess callback only
+    public UpdateResult execute(Consumer<UpdateResult> onSuccess) {
+        return execute(UpdateResultType.SUCCESS, onSuccess, null);
     }
 
-    public void execute(Consumer<UpdateResult> onSuccess, Consumer<Exception> onFailure) {
+    // execute() with onSuccess and onFailure callbacks
+    public UpdateResult execute(Consumer<UpdateResult> onSuccess, Consumer<Exception> onFailure) {
+        return execute(UpdateResultType.BOTH, onSuccess, onFailure);
+    }
+
+    // Main execute() implementation with UpdateResultType
+    public UpdateResult execute(UpdateResultType type, Consumer<UpdateResult> onSuccess, Consumer<Exception> onFailure) {
         UpdateResult result = execute();
-        if (result.isSuccess()) {
-            onSuccess.accept(result);
-        } else {
-            onFailure.accept(result.getException());
+
+        switch (type) {
+            case SUCCESS:
+                if (result.isSuccess() && onSuccess != null) {
+                    onSuccess.accept(result);
+                }
+                break;
+            case FAILURE:
+                if (!result.isSuccess() && onFailure != null) {
+                    onFailure.accept(result.getException());
+                }
+                break;
+            case BOTH:
+                if (result.isSuccess()) {
+                    if (onSuccess != null) {
+                        onSuccess.accept(result);
+                    }
+                } else {
+                    if (onFailure != null) {
+                        onFailure.accept(result.getException());
+                    }
+                }
+                break;
         }
+
+        return result;
     }
 
     private String buildQuery() {

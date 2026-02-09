@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/src/main/java/de/haizon/flux/result/UpdateResultType.java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/main/java/de/haizon/flux/result/UpdateResultType.java" />
+              <option name="updatedContent" value="package de.haizon.flux.result;&#10;&#10;public enum UpdateResultType {&#10;    SUCCESS,&#10;    FAILURE,&#10;    BOTH&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
