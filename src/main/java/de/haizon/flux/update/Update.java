@@ -1,10 +1,8 @@
-package de.haizon.flux.query;
+package de.haizon.flux.update;
 
 import de.haizon.flux.Flux;
 import de.haizon.flux.annotations.Entity;
-import de.haizon.flux.annotations.Index;
-
-import java.lang.reflect.Field;
+import de.haizon.flux.result.UpdateResult;
 
 public class Update<T> {
 
@@ -73,20 +71,26 @@ public class Update<T> {
         return this;
     }
 
-    public void execute() {
-        String query = updateBuilder.toString();
-        if (hasWhere) {
-            query += " WHERE " + whereBuilder.toString();
+    public UpdateResult execute() {
+        String query = buildQuery();
+        try {
+            int rowsAffected = Flux.getWrapper().executeUpdate(query);
+            return new UpdateResult(rowsAffected, query);
+        } catch (Exception e) {
+            return new UpdateResult(e, query);
         }
-        Flux.getWrapper().executeUpdate(query);
     }
 
-    @Override
-    public String toString() {
+    private String buildQuery() {
         String query = updateBuilder.toString();
         if (hasWhere) {
             query += " WHERE " + whereBuilder.toString();
         }
         return query;
+    }
+
+    @Override
+    public String toString() {
+        return buildQuery();
     }
 }

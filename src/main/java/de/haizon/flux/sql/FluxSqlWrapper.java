@@ -74,14 +74,16 @@ public class FluxSqlWrapper {
         return null;
     }
 
-    public void executeUpdate(String query) {
+    public int executeUpdate(String query) {
         try {
             Statement statement = this.connection.createStatement();
-            statement.executeUpdate(query);
+            int rowsAffected = statement.executeUpdate(query);
             statement.close();
+            return rowsAffected;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     public boolean execute(String query) {
