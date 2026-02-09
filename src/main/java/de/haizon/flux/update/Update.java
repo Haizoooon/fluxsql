@@ -4,6 +4,8 @@ import de.haizon.flux.Flux;
 import de.haizon.flux.annotations.Entity;
 import de.haizon.flux.result.UpdateResult;
 
+import java.util.function.Consumer;
+
 public class Update<T> {
 
     private final Class<T> clazz;
@@ -78,6 +80,22 @@ public class Update<T> {
             return new UpdateResult(rowsAffected, query);
         } catch (Exception e) {
             return new UpdateResult(e, query);
+        }
+    }
+
+    public void execute(Consumer<UpdateResult> onSuccess) {
+        UpdateResult result = execute();
+        if (result.isSuccess()) {
+            onSuccess.accept(result);
+        }
+    }
+
+    public void execute(Consumer<UpdateResult> onSuccess, Consumer<Exception> onFailure) {
+        UpdateResult result = execute();
+        if (result.isSuccess()) {
+            onSuccess.accept(result);
+        } else {
+            onFailure.accept(result.getException());
         }
     }
 
